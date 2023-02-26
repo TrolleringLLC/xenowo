@@ -13,6 +13,7 @@ const {
   xenowoLog,
 } = require("./modules/xenowo_libs.js");
 const chalk = require("chalk");
+const { exit } = require("process");
 
 // Information & booting
 var version = "0.2";
@@ -102,6 +103,12 @@ token = xenowuLib.retrieveSetting("token");
 client.login(token).catch((e) => {
   // If login fails, try to regen token
   // Doesn't always work, may need captcha solver.
+  logError("[0;31mToken is invalid. [4;31mPlease regenerate your token.[0;37m");
+  logError(
+    "[0;31mLOGGING OUT OF THE DISCORD APP/WEBAPP WILL CAUSE YOUR TOKEN TO GET REGENERATED.[0;37m"
+  );
+  exit(1);
+  // WIP TOKEN REGENERATION !!!
   if (xenowuLib.retrieveSetting("mfa")) {
     xenowuLib
       .generateToken(
