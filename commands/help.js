@@ -32,7 +32,7 @@ utility = Useful commands
 image = Image commands
 nsfw = The forbidden...
 
-[ https://discord.gg/sWErAGjRWD ]
+[ join: .gg/sWErAGjRWD ]
             ` +
           "```"
       );
@@ -63,7 +63,7 @@ nsfw = The forbidden...
 [ ${String(args[1]).toUpperCase()} COMMANDS ]
 ${commtext}
 
-[ https://discord.gg/sWErAGjRWD ]
+[ join: .gg/sWErAGjRWD ]
     ` +
         "```"
     );
