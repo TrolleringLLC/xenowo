@@ -7,7 +7,7 @@ const {
 const chalk = require("chalk");
 module.exports = {
   active: false,
-  name: "messageCreatae",
+  name: "messageCreate",
   execute: (msg, bot) => {
     // IN PROGRESS
     if (msg.author.id == bot.user.id) return;

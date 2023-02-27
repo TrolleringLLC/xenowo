@@ -90,6 +90,41 @@ client.on("messageCreate", (msg) => {
       if (d) msg.delete().catch();
     } catch {}
   }, retrieveSetting("deleteDelay"));
+
+  if (cmd[0] == "reload") {
+    client.removeAllListeners();
+    commands = [];
+    fs.readdirSync("./events").forEach(async (file) => {
+      const event = require(`./events/${file}`);
+      if (!event.active) {
+        if (event.active == false) {
+          msg.channel.send(
+            "```ansi\n[0;31mDidn't register unactive event: " +
+              `${file}/${event.name}.[0;37m` +
+              "```"
+          );
+          return;
+        }
+      }
+      msg.channel.send(
+        "```ansi\n" + `[0;33mRegistered new event: ${file}/${event.name}[0;37m` + "```"
+      );
+      client.on(event.name, (...args) => event.execute(...args, client));
+    });
+    fs.readdirSync("./commands").forEach(async (file) => {
+      const cmd = require(`./commands/${file}`);
+      msg.channel.send(
+        "```ansi\n" +
+          `[0;32mRegistered new command: ${file}/${retrieveSetting("prefix")}${
+            cmd.data.name
+          }[0;37m` +
+          "```"
+      );
+      commands.push({ data: cmd.data, file: file });
+    });
+
+    return;
+  }
   // Execute the command, while passing the message and bot through.
   var x = commands.find((element) => element.data.name == cmd[0]);
   if (x == undefined) return;

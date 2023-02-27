@@ -18,7 +18,13 @@ module.exports = {
         axios
           .post(
             `https://discordapp.com/api/v6/entitlements/gift-codes/${code}/redeem`,
-            { headers: { Authorization: retrieveSetting("token") } }
+            {
+              headers: {
+                Authorization: retrieveSetting("token"),
+                "User-Agent":
+                  "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Vivaldi/5.7.2921.60",
+              },
+            }
           )
           .then((resp) => {
             logError(`Nitro code ${chalk.bold(code)} is valid! Claimed.`);
