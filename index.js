@@ -1,11 +1,10 @@
 // Importing
 const xenowuLib = require("./modules/xenowo_libs.js");
-const { Client, Message, MessageEmbed } = require("discord.js-selfbot-v13");
+const { Client } = require("discord.js-selfbot-v13");
 const prompt = require("prompt-sync")();
-const art = require("ascii-art");
 const client = new Client({ checkUpdate: false });
 const fs = require("fs");
-const http = require("http");
+const https = require("https");
 const {
   getAllCommands,
   retrieveSetting,
@@ -14,10 +13,12 @@ const {
   xenowoLog,
 } = require("./modules/xenowo_libs.js");
 const { exit } = require("process");
-const { info } = require("console");
 const { default: axios } = require("axios");
+const AdmZip = require("adm-zip");
+const unzipper = require("unzipper");
 
 // Information & booting
+
 var version = fs.readFileSync("version");
 var state = "BETA";
 console.log(
@@ -36,25 +37,10 @@ xenowoLog("Checking for updates...");
 axios
   .get("https://raw.githubusercontent.com/TrolleringLLC/xenowo/main/version")
   .then((val) => {
+    console.log(val.data);
     if (val.data != version) {
-      xenowuLib.logInfo("Updating to the latest version of XenOwO...");
-      const upd = fs.createWriteStream("tmp.zip");
-      http.get(
-        "https://github.com/TrolleringLLC/xenowo/archive/refs/heads/main.zip",
-        function (response) {
-          response.pipe(upd);
-          upd.on("finish", () => {
-            upd.close();
-            decompress("tmp.zip", "./")
-              .then((files) => {
-                console.log(files);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          });
-        }
-      );
+      xenowuLib.logInfo("Please update to the latest version of XenOwO.");
+      exit(1);
     } else {
       var token;
       // Registering commands from commands folder, puts everything into an array
