@@ -37,7 +37,6 @@ xenowoLog("Checking for updates...");
 axios
   .get("https://raw.githubusercontent.com/TrolleringLLC/xenowo/main/version")
   .then((val) => {
-    console.log(val.data);
     if (val.data != version) {
       xenowuLib.logInfo("Please update to the latest version of XenOwO.");
       exit(1);
