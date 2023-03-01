@@ -13,7 +13,14 @@ module.exports = {
       ""
     );
     if (args == "" || args == " ") {
-      msg.channel.send("```diff\n" + `- No arguments have been found!` + "```");
+      msg.channel.send(
+        "```ansi\n" +
+          asciiLogo() +
+          "```" +
+          "```diff\n" +
+          `- No arguments have been found!` +
+          "```"
+      );
       return;
     }
     figlet.text(
@@ -28,7 +35,14 @@ module.exports = {
       function (err, data) {
         if (err) {
           console.log("Something went wrong...");
-          msg.channel.send("```diff\n" + `- ERROR:\n${err}` + "```");
+          msg.channel.send(
+            "```ansi\n" +
+              asciiLogo() +
+              "```" +
+              "```diff\n" +
+              `- ERROR:\n${err}` +
+              "```"
+          );
           console.error(err);
           return;
         }

@@ -8,7 +8,7 @@ module.exports = {
   data: new builder.xenoBuilder(
     "help",
     "The help command, for all your needs.",
-    "fun"
+    "utility"
   ),
   execute: (msg, bot) => {
     const args = msg.content
@@ -17,7 +17,9 @@ module.exports = {
 
     if (!args[1]) {
       var x = msg.channel.send(
-        asciiLogo +
+        "```ansi\n" +
+          asciiLogo() +
+          "```" +
           "```ini\n" +
           `
 
@@ -40,7 +42,11 @@ nsfw = The forbidden...
     }
     if (!builder.categories.includes(args[1])) {
       var x = msg.channel.send(
-        xenowuLib.asciiLogo + "```diff\n" + "- That category does not exist!```"
+        "```ansi\n" +
+          asciiLogo() +
+          "```" +
+          "```diff\n" +
+          "- That category does not exist!```"
       );
       return;
     }
@@ -57,7 +63,9 @@ nsfw = The forbidden...
       );
     });
     var x = msg.channel.send(
-      asciiLogo +
+      "```ansi\n" +
+        asciiLogo() +
+        "```" +
         "```ini\n" +
         `
 [ ${String(args[1]).toUpperCase()} COMMANDS ]

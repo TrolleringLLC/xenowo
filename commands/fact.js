@@ -17,7 +17,9 @@ module.exports = {
       "McDonalds once tried distributing broccoli chewing gum to kids. That didn’t go well...",
     ];
     msg.channel.send(
-      xenowu_libs.asciiLogo +
+      "```ansi\n" +
+        asciiLogo() +
+        "```" +
         "```ansi\n" +
         `[1;34mFact: [0;34m${facts[Math.floor(Math.random() * facts.length)]}` +
         "```"

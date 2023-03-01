@@ -15,14 +15,18 @@ module.exports = {
     console.log(args);
     if (!args[1]) {
       msg.channel.send(
-        asciiLogo +
+        "```ansi\n" +
+          asciiLogo() +
+          "```" +
           "```diff\n- No argument has been provided for argument 1.```"
       );
       return;
     }
     if (!args[2]) {
       msg.channel.send(
-        asciiLogo +
+        "```ansi\n" +
+          asciiLogo() +
+          "```" +
           "```diff\n- No argument has been provided for argument 2.```"
       );
       return;
@@ -30,7 +34,10 @@ module.exports = {
     switch (args[1]) {
       case "get":
         msg.channel.send(
-          "```ini\n" +
+          "```ansi\n" +
+            asciiLogo() +
+            "```" +
+            "```ini\n" +
             `[ SETTINGS ]\n${args[2]} = ${retrieveSetting(args[2])}` +
             "```"
         );
@@ -38,7 +45,9 @@ module.exports = {
       case "set":
         if (!args[3]) {
           msg.channel.send(
-            asciiLogo +
+            "```ansi\n" +
+              asciiLogo() +
+              "```" +
               "```diff\n- No argument has been provided for argument 3.```"
           );
           return;

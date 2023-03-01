@@ -4,35 +4,53 @@ const { Client } = require("discord.js-selfbot-v13");
 const prompt = require("prompt-sync")();
 const client = new Client({ checkUpdate: false });
 const fs = require("fs");
-const https = require("https");
 const {
   getAllCommands,
   retrieveSetting,
   logInfo,
   logError,
   xenowoLog,
+  asciiLogo,
 } = require("./modules/xenowo_libs.js");
+const yaml = require("yaml");
 const { exit } = require("process");
 const { default: axios } = require("axios");
-const AdmZip = require("adm-zip");
-const unzipper = require("unzipper");
 
-// Information & booting
+// check if theme is set, if yes load it.
+var theme;
+var themeAvailable = false;
+if (retrieveSetting("theme") != "default") {
+  console.log(`data/themes/${retrieveSetting("theme")}.yaml`);
+  if (fs.existsSync(`data/themes/${retrieveSetting("theme")}.yaml`)) {
+    themeAvailable = true;
+    theme = yaml.parse(
+      fs.readFileSync(`data/themes/${retrieveSetting("theme")}.yaml`, "utf8")
+    );
+  } else {
+    logError(`Could not find a theme named: ${retrieveSetting("theme")}`);
+  }
+}
 
+// version
 var version = fs.readFileSync("version");
 var state = "BETA";
-console.log(
-  `
-[1;35m██╗  ██╗███████╗███╗   ██╗ ██████╗ ██╗    ██╗ ██████╗ 
-[1;34m╚██╗██╔╝██╔════╝████╗  ██║██╔═══██╗██║    ██║██╔═══██╗
-[1;37m ╚███╔╝ █████╗  ██╔██╗ ██║██║   ██║██║ █╗ ██║██║   ██║
-[1;34m ██╔██╗ ██╔══╝  ██║╚██╗██║██║   ██║██║███╗██║██║   ██║
-[1;35m██╔╝ ██╗███████╗██║ ╚████║╚██████╔╝╚███╔███╔╝╚██████╔╝
-[1;34m╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝  ╚══╝╚══╝  ╚═════╝ [0;37m`
-);
+
+// print boot logo
+if (!themeAvailable) {
+  console.log(asciiLogo());
+} else {
+  for (const line in theme.logo) {
+    console.log(theme.logo[line]);
+  }
+}
 console.log("[0;33m╔════════════════════════════════════════════════════╗[0;37m");
+
+// print information about sb
 xenowoLog("Author: [1;36mhexlocation#0887[0;37m / [1;36m696339037971021865[0;37m");
 xenowoLog(`Version: [38;0;60;199;163m${version}[0;37m/[38;2;255;0;60;1m${state}[0;37m`);
+if (themeAvailable) xenowoLog(`Theme: [1;36m${theme["name"]}[0;37m`);
+
+// check for updates
 xenowoLog("Checking for updates...");
 axios
   .get("https://raw.githubusercontent.com/TrolleringLLC/xenowo/main/version")
@@ -104,7 +122,7 @@ axios
 
         if (cmd[0] == "reload") {
           client.removeAllListeners();
-          commands = [];
+          commands.length = 0;
           fs.readdirSync("./events").forEach(async (file) => {
             const event = require(`./events/${file}`);
             if (!event.active) {
@@ -114,15 +132,17 @@ axios
                     `${file}/${event.name}.[0;37m` +
                     "```"
                 );
-                return;
+              } else {
+                msg.channel.send(
+                  "```ansi\n" +
+                    `[0;33mRegistered new event: ${file}/${event.name}[0;37m` +
+                    "```"
+                );
+                client.on(event.name, (...args) =>
+                  event.execute(...args, client)
+                );
               }
             }
-            msg.channel.send(
-              "```ansi\n" +
-                `[0;33mRegistered new event: ${file}/${event.name}[0;37m` +
-                "```"
-            );
-            client.on(event.name, (...args) => event.execute(...args, client));
           });
           fs.readdirSync("./commands").forEach(async (file) => {
             const cmd = require(`./commands/${file}`);

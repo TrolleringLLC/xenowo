@@ -20,7 +20,9 @@ module.exports = {
       .catch((err) => {
         console.error(err);
         var z = msg.channel.send(
-          asciiLogo +
+          "```ansi\n" +
+            asciiLogo() +
+            "```" +
             "```diff\n" +
             `
         An error has occured!

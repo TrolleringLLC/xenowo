@@ -3,5 +3,6 @@
   "mfa": "should be true or false (THIS IS WIP SO NOT REQUIREd)",
   "prefix": "+",
   "deleteDelay": 5000,
-  "webhook": "WEBHOOK URL"
+  "webhook": "WEBHOOK URL",
+  "theme": "default"
 }

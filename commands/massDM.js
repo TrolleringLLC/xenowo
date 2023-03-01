@@ -18,7 +18,6 @@ module.exports = {
         { headers: { Authorization: retrieveSetting("token") } }
       )
       .then((val) => {
-        require("fs").writeFileSync("testing.json", JSON.stringify(val.data));
         var members = [];
         for (const ob in val.data) {
           if (members.includes(val.data[ob].author.id)) continue;
