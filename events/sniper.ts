@@ -96,7 +96,7 @@ module.exports = {
                 },
               ],
             };
-            axios.post(retrieveSetting("webhook"), data);
+            post(retrieveSetting("webhook"), data);
           });
       }
     }
