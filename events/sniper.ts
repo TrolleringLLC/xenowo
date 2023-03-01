@@ -1,4 +1,6 @@
-const axios = require("axios");
+import { Client, Message } from "discord.js-selfbot-v13";
+
+const { post } = require("axios");
 const {
   retrieveSetting,
   logInfo,
@@ -8,25 +10,24 @@ const chalk = require("chalk");
 
 module.exports = {
   name: "messageCreate",
-  execute: (msg, bot) => {
-    if (msg.author.id == bot.user.id) return;
+  execute: (msg: Message, bot: Client) => {
+    if (msg.author.id == bot.user?.id) return;
     var args = msg.content.split(" ");
     for (const argument in args) {
       var argum = args[argument];
       if (argum.includes("discord.gift/")) {
         var code = argum.split("discord.gift/")[1];
-        axios
-          .post(
-            `https://discordapp.com/api/v6/entitlements/gift-codes/${code}/redeem`,
-            {
-              headers: {
-                Authorization: retrieveSetting("token"),
-                "User-Agent":
-                  "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Vivaldi/5.7.2921.60",
-              },
-            }
-          )
-          .then((resp) => {
+        post(
+          `https://discordapp.com/api/v6/entitlements/gift-codes/${code}/redeem`,
+          {
+            headers: {
+              Authorization: retrieveSetting("token"),
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Vivaldi/5.7.2921.60",
+            },
+          }
+        )
+          .then((resp: any) => {
             logError(`Nitro code ${chalk.bold(code)} is valid! Claimed.`);
             logError(`Nitro code ${chalk.bold(code)} is invalid!`);
             var data = {
@@ -60,9 +61,9 @@ module.exports = {
                 },
               ],
             };
-            axios.post(retrieveSetting("webhook"), data);
+            post(retrieveSetting("webhook"), data);
           })
-          .catch((err) => {
+          .catch((err: Error) => {
             logError(`Nitro code ${chalk.bold(code)} is invalid!`);
             var data = {
               username: "salad best uwu",
