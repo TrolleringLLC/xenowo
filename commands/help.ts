@@ -1,16 +1,15 @@
+import { Client, Message } from "discord.js-selfbot-v13";
+import { readdirSync } from "fs";
 const builder = require("../modules/xenowo_builder");
 const { asciiLogo, retrieveSetting } = require("../modules/xenowo_libs");
 const xenowuLib = require("../modules/xenowo_libs");
-const fs = require("fs");
-var path = require("path");
-const { Message } = require("discord.js-selfbot-v13");
 module.exports = {
   data: new builder.xenoBuilder(
     "help",
     "The help command, for all your needs.",
     "utility"
   ),
-  execute: (msg, bot) => {
+  execute: (msg: Message, bot: Client) => {
     const args = msg.content
       .replace(xenowuLib.retrieveSetting("prefix"), "")
       .split(" ");
@@ -40,7 +39,7 @@ nsfw = The forbidden...
       );
       return;
     }
-    if (!builder.categories.includes(args[1])) {
+    if (!Object.values(builder.categories).includes(args[1])) {
       var x = msg.channel.send(
         "```ansi\n" +
           asciiLogo() +
@@ -51,7 +50,7 @@ nsfw = The forbidden...
       return;
     }
     var commtext = "";
-    fs.readdirSync("./commands").forEach(async (file) => {
+    readdirSync("./commands").forEach(async (file: string) => {
       const cmd = require(`./${file}`);
       if (cmd.data.category != args[1]) return [];
       commtext = commtext.concat(

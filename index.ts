@@ -1,7 +1,9 @@
+import { DiscordAPIError, Message } from "discord.js-selfbot-v13";
+
 // Importing
-const xenowuLib = require("./modules/xenowo_libs.js");
+const xenowuLib = require("./modules/xenowo_libs");
 const { Client } = require("discord.js-selfbot-v13");
-const prompt = require("prompt-sync")();
+const pr = require("prompt-sync")();
 const client = new Client({ checkUpdate: false });
 const fs = require("fs");
 const {
@@ -11,10 +13,10 @@ const {
   logError,
   xenowoLog,
   asciiLogo,
-} = require("./modules/xenowo_libs.js");
+} = require("./modules/xenowo_libs");
 const yaml = require("yaml");
 const { exit } = require("process");
-const { default: axios } = require("axios");
+const axios = require("axios");
 
 // check if theme is set, if yes load it.
 var theme;
@@ -54,26 +56,26 @@ if (themeAvailable) xenowoLog(`Theme: [1;36m${theme["name"]}[0;37m`);
 xenowoLog("Checking for updates...");
 axios
   .get("https://raw.githubusercontent.com/TrolleringLLC/xenowo/main/version")
-  .then((val) => {
+  .then((val: any) => {
     if (val.data != version) {
       xenowuLib.logInfo("Please update to the latest version of XenOwO.");
       exit(1);
     } else {
       var token;
       // Registering commands from commands folder, puts everything into an array
-      var commands = [];
-      fs.readdirSync("./commands").forEach(async (file) => {
+      var commands = new Map();
+      fs.readdirSync("./commands").forEach(async (file: String) => {
         const cmd = require(`./commands/${file}`);
         logInfo(
           `[0;32mRegistered new command: ${file}/${retrieveSetting("prefix")}${
             cmd.data.name
           }[0;37m`
         );
-        commands.push({ data: cmd.data, file: file });
+        commands.set(cmd.data, file);
       });
 
       // Registering all events in the events folder
-      fs.readdirSync("./events").forEach(async (file) => {
+      fs.readdirSync("./events").forEach(async (file: String) => {
         const event = require(`./events/${file}`);
         if (!event.active) {
           if (event.active == false) {
@@ -85,7 +87,7 @@ axios
           }
         }
         logInfo(`[0;33mRegistered new event: ${file}/${event.name}[0;37m`);
-        client.on(event.name, (...args) => event.execute(...args, client));
+        client.on(event.name, (...args: any) => event.execute(...args, client));
       });
 
       // Show message on ready
@@ -98,7 +100,7 @@ axios
       });
 
       // Command Handler
-      client.on("messageCreate", (msg) => {
+      client.on("messageCreate", (msg: Message) => {
         // Check if the author is the owner of SB, if not, throw away.
         const author = msg.author;
         if (author.id != client.user.id) return;
@@ -122,8 +124,8 @@ axios
 
         if (cmd[0] == "reload") {
           client.removeAllListeners();
-          commands.length = 0;
-          fs.readdirSync("./events").forEach(async (file) => {
+          commands.clear();
+          fs.readdirSync("./events").forEach(async (file: String) => {
             const event = require(`./events/${file}`);
             if (!event.active) {
               if (event.active == false) {
@@ -138,13 +140,13 @@ axios
                     `[0;33mRegistered new event: ${file}/${event.name}[0;37m` +
                     "```"
                 );
-                client.on(event.name, (...args) =>
+                client.on(event.name, (...args: any) =>
                   event.execute(...args, client)
                 );
               }
             }
           });
-          fs.readdirSync("./commands").forEach(async (file) => {
+          fs.readdirSync("./commands").forEach(async (file: String) => {
             const cmd = require(`./commands/${file}`);
             msg.channel.send(
               "```ansi\n" +
@@ -153,22 +155,27 @@ axios
                 }[0;37m` +
                 "```"
             );
-            commands.push({ data: cmd.data, file: file });
+            commands.set(cmd.data, file);
           });
 
           return;
         }
         // Execute the command, while passing the message and bot through.
-        var x = commands.find((element) => element.data.name == cmd[0]);
+        var x;
+        for (let z of commands.entries()) {
+          if (z[0].name == cmd[0]) {
+            x = z[1];
+          }
+        }
         if (x == undefined) return;
-        require("./commands/" + x.file).execute(msg, client);
+        require("./commands/" + x).execute(msg, client);
       });
 
       // Retrieving token from file
       token = xenowuLib.retrieveSetting("token");
 
       // Login to token
-      client.login(token).catch((e) => {
+      client.login(token).catch(() => {
         // If login fails, try to regen token
         // Doesn't always work, may need captcha solver.
         logError("[0;31mToken is invalid. [4;31mPlease regenerate your token.[0;37m");
@@ -176,29 +183,6 @@ axios
           "[0;31mLOGGING OUT OF THE DISCORD APP/WEBAPP WILL CAUSE YOUR TOKEN TO GET REGENERATED.[0;37m"
         );
         exit(1);
-        // WIP TOKEN REGENERATION !!!
-        if (xenowuLib.retrieveSetting("mfa")) {
-          xenowuLib
-            .generateToken(
-              prompt("Email > "),
-              prompt("Password > "),
-              prompt("2FA code > ")
-            )
-            .then((tk) => {
-              token = tk;
-              xenowuLib.setSetting("token", tk);
-              client.login(tk);
-            });
-        } else {
-          xenowuLib
-            .generateToken(prompt("Email > "), prompt("Password > "), 0)
-            .then((tk) => {
-              token = tk;
-              xenowuLib.setSetting("token", tk);
-              client.login(tk);
-            });
-        }
       });
-      module.exports = commands;
     }
   });

@@ -1,10 +1,15 @@
-const Discord = require("discord.js-selfbot-v13");
-const { xenoBuilder } = require("../modules/xenowo_builder");
+import { Client, Message } from "discord.js-selfbot-v13";
+
+const builder = require("../modules/xenowo_builder");
 const { asciiLogo } = require("../modules/xenowo_libs");
 const xenowu_libs = require("../modules/xenowo_libs");
 module.exports = {
-  data: new xenoBuilder("fact", "Learn some very cool, new facts!", "fun"),
-  execute: (msg, bot) => {
+  data: new builder.xenoBuilder(
+    "fact",
+    "Learn some very cool, new facts!",
+    "fun"
+  ),
+  execute: (msg: Message, bot: Client) => {
     var facts = [
       "Vatican City is the smallest country in the world.",
       "Odontophobia is the fear of teeth.",

@@ -1,13 +1,15 @@
+import { Client, Message } from "discord.js-selfbot-v13";
+
 const builder = require("../modules/xenowo_builder");
 var figlet = require("figlet");
-const { retrieveSetting } = require("../modules/xenowo_libs");
+const { retrieveSetting, asciiLogo } = require("../modules/xenowo_libs");
 module.exports = {
   data: new builder.xenoBuilder(
     "text2ascii",
     "Generate very epic looking ascii art!",
     "image"
   ),
-  execute: (msg, bot) => {
+  execute: (msg: Message, bot: Client) => {
     var args = msg.content.replace(
       retrieveSetting("prefix") + "text2ascii",
       ""
@@ -32,7 +34,7 @@ module.exports = {
         width: 80,
         whitespaceBreak: true,
       },
-      function (err, data) {
+      function (err: Error, data: string) {
         if (err) {
           console.log("Something went wrong...");
           msg.channel.send(
@@ -48,18 +50,19 @@ module.exports = {
         }
         var art = "[0;34m";
         var arr = data.split("\n");
-        for (const da in arr) {
-          if (arr[da].startsWith("    ")) {
-            if (da == arr.length) {
-              art += arr[da].slice(4);
+        for (const da of arr) {
+          var num: Number = arr.indexOf(da);
+          if (da.startsWith("    ")) {
+            if (num == arr.length) {
+              art += da.slice(4);
             } else {
-              art += arr[da].slice(4) + "\n";
+              art += da.slice(4) + "\n";
             }
           } else {
-            if (da == arr.length) {
-              art += arr[da];
+            if (num == arr.length) {
+              art += da;
             } else {
-              art += arr[da] + "\n";
+              art += da + "\n";
             }
           }
         }

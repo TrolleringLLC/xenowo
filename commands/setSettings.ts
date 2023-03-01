@@ -1,4 +1,5 @@
-const { xenoBuilder } = require("../modules/xenowo_builder");
+import { Client, Message } from "discord.js-selfbot-v13";
+const builder = require("../modules/xenowo_builder");
 const {
   asciiLogo,
   retrieveSetting,
@@ -7,12 +8,11 @@ const {
 const xenowu_libs = require("../modules/xenowo_libs");
 
 module.exports = {
-  data: new xenoBuilder("settings", "Manage your settings.", "utility"),
-  execute: (msg, bot) => {
+  data: new builder.xenoBuilder("settings", "Manage your settings.", "utility"),
+  execute: (msg: Message, bot: Client) => {
     const args = msg.content
       .replace(xenowu_libs.retrieveSetting("prefix"), "")
       .split(" ");
-    console.log(args);
     if (!args[1]) {
       msg.channel.send(
         "```ansi\n" +
